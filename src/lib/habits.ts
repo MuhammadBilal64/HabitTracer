@@ -71,7 +71,15 @@ export function isFuture(d: Date, today: Date): boolean {
  */
 export function currentStreak(habit: Habit, today: Date): number {
   let streak = 0;
-  let checkDate = new Date(today);
+  
+  const checkedKeys = Object.keys(habit.checks).filter((k) => habit.checks[k]);
+  if (checkedKeys.length === 0) return 0;
+  
+  checkedKeys.sort();
+  const maxKey = checkedKeys[checkedKeys.length - 1];
+  const maxDate = fromKey(maxKey);
+  
+  let checkDate = maxDate > today ? maxDate : new Date(today);
 
   if (!habit.checks[toKey(checkDate)]) {
     checkDate = addDays(checkDate, -1);

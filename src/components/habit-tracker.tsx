@@ -1,3 +1,5 @@
+"use client";
+
 import { useEffect, useMemo, useState } from "react";
 import { Check, ChevronLeft, ChevronRight, Flame, Plus, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -50,10 +52,7 @@ export function HabitTracker() {
   function addHabit() {
     const name = newName.trim();
     if (!name) return;
-    setHabits((h) => [
-      ...h,
-      { id: uid(), name, createdAt: toKey(today), checks: {} },
-    ]);
+    setHabits((h) => [...h, { id: uid(), name, createdAt: toKey(today), checks: {} }]);
     setNewName("");
   }
 
@@ -84,9 +83,7 @@ export function HabitTracker() {
     if (!editingId) return;
     const name = editingValue.trim();
     if (name) {
-      setHabits((hs) =>
-        hs.map((h) => (h.id === editingId ? { ...h, name } : h)),
-      );
+      setHabits((hs) => hs.map((h) => (h.id === editingId ? { ...h, name } : h)));
     }
     setEditingId(null);
     setEditingValue("");
@@ -98,31 +95,29 @@ export function HabitTracker() {
         <h1 className="text-3xl font-semibold tracking-tight text-foreground sm:text-4xl">
           Habits
         </h1>
-        <p className="text-sm text-muted-foreground">
-          Tick each day. Watch the streak grow.
-        </p>
+        <p className="text-sm text-muted-foreground">Tick each day. Watch the streak grow.</p>
       </header>
 
       {/* Add habit */}
-      <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          addHabit();
-        }}
-        className="mb-6 flex gap-2"
-      >
+      <div className="mb-6 flex gap-2">
         <Input
           value={newName}
           onChange={(e) => setNewName(e.target.value)}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              addHabit();
+            }
+          }}
           placeholder="New habit — e.g. Read 30 min"
           aria-label="New habit name"
           className="h-11"
         />
-        <Button type="submit" size="lg" disabled={!newName.trim()}>
+        <Button type="button" size="lg" disabled={!newName.trim()} onClick={addHabit}>
           <Plus className="size-4" />
           Add
         </Button>
-      </form>
+      </div>
 
       {/* Week nav */}
       <div className="mb-4 flex items-center justify-between">
@@ -143,16 +138,10 @@ export function HabitTracker() {
           >
             <ChevronRight />
           </Button>
-          <span className="ml-2 text-sm font-medium text-foreground">
-            {formatRange(weekStart)}
-          </span>
+          <span className="ml-2 text-sm font-medium text-foreground">{formatRange(weekStart)}</span>
         </div>
         {!isCurrentWeek && (
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setWeekStart(startOfWeek(today))}
-          >
+          <Button variant="outline" size="sm" onClick={() => setWeekStart(startOfWeek(today))}>
             This week
           </Button>
         )}
@@ -175,17 +164,10 @@ export function HabitTracker() {
                     isToday && "text-primary",
                   )}
                 >
-                  <span className="hidden sm:block">
-                    {DOW_LABELS[(d.getDay() + 6) % 7]}
-                  </span>
-                  <span className="sm:hidden">
-                    {DOW_LABELS[(d.getDay() + 6) % 7][0]}
-                  </span>
+                  <span className="hidden sm:block">{DOW_LABELS[(d.getDay() + 6) % 7]}</span>
+                  <span className="sm:hidden">{DOW_LABELS[(d.getDay() + 6) % 7][0]}</span>
                   <span
-                    className={cn(
-                      "mt-0.5 text-[11px] tabular-nums",
-                      isToday && "font-semibold",
-                    )}
+                    className={cn("mt-0.5 text-[11px] tabular-nums", isToday && "font-semibold")}
                   >
                     {d.getDate()}
                   </span>
@@ -253,9 +235,9 @@ export function HabitTracker() {
                           className={cn(
                             "flex size-8 items-center justify-center rounded-md border transition",
                             "focus:outline-none focus-visible:ring-2 focus-visible:ring-ring",
-                              checked
-                                ? "border-primary bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
-                                : "border-border bg-background hover:border-primary/60 hover:bg-accent",
+                            checked
+                              ? "border-primary bg-primary text-primary-foreground shadow-sm hover:bg-primary/90"
+                              : "border-border bg-background hover:border-primary/60 hover:bg-accent",
                             isToday && !checked && "ring-1 ring-primary/40",
                           )}
                         >
@@ -275,11 +257,7 @@ export function HabitTracker() {
                       streak > 0 ? "text-foreground" : "text-muted-foreground/60",
                     )}
                   >
-                    {streak > 0 && (
-                      <Flame
-                        className="size-3.5 text-primary"
-                      />
-                    )}
+                    {streak > 0 && <Flame className="size-3.5 text-primary" />}
                     <span className="font-medium">{streak}</span>
                   </div>
                 </li>
@@ -288,7 +266,6 @@ export function HabitTracker() {
           </ul>
         </div>
       )}
-
     </div>
   );
 }
